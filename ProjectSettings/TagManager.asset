@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Parallax
+  - Obstacle
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Sky
+    uniqueID: 3983005215
+    locked: 0
+  - name: BG3
+    uniqueID: 738091063
+    locked: 0
+  - name: BG2
+    uniqueID: 1316435419
+    locked: 0
+  - name: BG1
+    uniqueID: 2714293025
+    locked: 0
+  - name: Ground
+    uniqueID: 1057547719
+    locked: 0
+  - name: Grass
+    uniqueID: 2405156729
+    locked: 0
+  - name: Forground
+    uniqueID: 1403128957
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
