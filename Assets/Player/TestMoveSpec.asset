@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151d54ab65ab7f041b3267c418ae8036, type: 3}
   m_Name: TestMoveSpec
   m_EditorClassIdentifier: 
-  maximumMoveSped: 4
-  jumpForce: 7
+  moveSpeed: 3
+  jumpVelocity: 12
   maxSlopeAngle: 60
-  pushForce: 0.2
-  interactPhysicsRayLength: 0.2
+  gravity: -1
+  accelerationTimeAirborne: 0.5
+  accelerationTimeGrounded: 0.05
