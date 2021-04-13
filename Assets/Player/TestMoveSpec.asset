@@ -15,3 +15,5 @@ MonoBehaviour:
   maximumMoveSped: 4
   jumpForce: 7
   maxSlopeAngle: 60
+  pushForce: 0.2
+  interactPhysicsRayLength: 0.2
