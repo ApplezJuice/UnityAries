@@ -26,10 +26,14 @@ public class Entry : MonoBehaviour
 	[SerializeField] BoxCollider2D playerCol;
 	[SerializeField] Rigidbody2D rb2d;
 	[SerializeField] SpriteRenderer playerSpriteRenderer;
+	[SerializeField] LayerMask interactableLayer;
+	[SerializeField] LayerMask groundLayer;
 
 	[SerializeField, HideInInspector] GameState state;
 	[SerializeField, HideInInspector] InputActions inputActions;
 
+
+	// TODO: CLEAN UP THIS
 	public float minGroundNormalY = .65f;
 	public float gravityModifier = 1f;
 
@@ -47,6 +51,7 @@ public class Entry : MonoBehaviour
 	const float skinWidth = 0.015f;
 
 	Vector3 move;
+	[SerializeField, HideInInspector] Vector2 lookDir;
 
 	void Awake() 
 	{
@@ -84,15 +89,66 @@ public class Entry : MonoBehaviour
 			Vector2 deltaPosition = state.player.velocity * dt;
 			Vector2 moveAlongGround = new Vector2 (groundNormal.y, -groundNormal.x);
 			Vector2 move = moveAlongGround * deltaPosition.x;
+
+			Bounds bounds = playerCol.bounds;
+			bounds.Expand(skinWidth);
+			Vector2 bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
+			Vector2 bottomRight = new Vector2(bounds.max.x, bounds.min.y);
+			Vector2 topRight = new Vector2(bounds.max.x, bounds.max.y);
+			Vector2 topLeft = new Vector2(bounds.min.x, bounds.max.y);
+
+			if (inputActions.Gameplay.Move.triggered)
+				lookDir = inputActions.Gameplay.Move.ReadValue<Vector2>();
+			
+			float dirX = Mathf.Sign(state.player.velocity.x);
+			float rayLengthX = 1f;
+
+			Vector2 rayOrigin = (lookDir.x == -1) ? bottomLeft : bottomRight;
+			Vector2 rayInteractionOrigin = (lookDir.x == -1) ? topLeft : topRight;
+
+			RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * lookDir.x, rayLengthX, groundLayer);
+			Debug.DrawRay(rayOrigin, Vector2.right * lookDir.x * rayLengthX, Color.blue);
+
+			RaycastHit2D interactableHit = Physics2D.Raycast(rayInteractionOrigin, Vector2.right * lookDir.x, playerMoveSpec.interactPhysicsRayLength);
+			Debug.DrawRay(rayInteractionOrigin, Vector2.right * lookDir.x * playerMoveSpec.interactPhysicsRayLength, Color.red);
+
+			if(hit)
+			{
+				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+				if (slopeAngle > playerMoveSpec.maxSlopeAngle)
+				{
+					state.player.velocity.x = 0f;
+				}
+			}
+
+
+			if (interactableHit)
+			{
+				// Box pushing
+				{
+					Box box = interactableHit.transform.GetComponent<Box>();
+					if (box)
+					{
+						if (box.isPushable)
+						{
+							//box.GetComponent<Rigidbody2D>().AddForce(state.player.velocity.normalized * 10f);
+							Rigidbody2D boxRb2d = box.GetComponent<Rigidbody2D>();
+							boxRb2d.position = (boxRb2d.position + move.normalized * (move.magnitude * playerMoveSpec.pushForce));
+							rb2d.position = (rb2d.position + move.normalized * (move.magnitude * playerMoveSpec.pushForce));
+							//boxRb2d.velocity += new Vector2(rb2d.velocity.x * 10f,0f);
+						}
+					}
+				}
+			}
 			Movement (move, false);
 			move = Vector2.up * deltaPosition.y;
 			Movement (move, true);
-
 			if (inputActions.Gameplay.Jump.triggered && grounded) {
 				//state.player.velocity.y = jumpTakeOffSpeed;
 				//rb2d.AddForce(Vector3.up * playerMoveSpec.jumpForce);
 				rb2d.velocity = new Vector2(rb2d.velocity.x, playerMoveSpec.jumpForce);
 			}
+
 		}
 		
 	}
@@ -112,27 +168,8 @@ public class Entry : MonoBehaviour
 			for (int i = 0; i < hitBufferList.Count; i++) 
 			{
 				Vector2 currentNormal = hitBufferList[i].normal;
-				Bounds bounds = playerCol.bounds;
-				bounds.Expand(skinWidth);
 
-				Vector2 bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
-				Vector2 bottomRight = new Vector2(bounds.max.x, bounds.min.y);
 				
-				float dirX = Mathf.Sign(state.player.velocity.x);
-				float rayLengthX = Mathf.Abs(state.player.velocity.x) + skinWidth;
-
-				Vector2 rayOrigin = (dirX == -1) ? bottomLeft : bottomRight;
-				Debug.DrawRay(rayOrigin, Vector2.right * dirX * rayLengthX, Color.blue);
-				RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * dirX, rayLengthX);
-
-				if(hit)
-				{
-					float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-					if (slopeAngle > playerMoveSpec.maxSlopeAngle)
-					{
-						state.player.velocity.x = 0f;
-					}
-				}
 
 				if (currentNormal.y > minGroundNormalY) 
 				{

@@ -4,5 +4,17 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"Library": true,
+			"Logs": true,
+			"Temp": true,
+			"PSD": true,
+			"Assets/Environment": true,
+			"UserSettings": true,
+			"Assets/Scenes": true,
+			"Assets/Rendering": true,
+			"Packages": true
+		}
+	}
 }

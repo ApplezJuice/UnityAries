@@ -14,4 +14,10 @@ public class MoveSpec : ScriptableObject
 	[Tooltip("The max slope angle a character can move up")]
 	public float maxSlopeAngle = 70f;
 
+	[Tooltip("The force the chacter pushes at")]
+	public float pushForce = .2f;
+
+	[Tooltip("Physics interaction ray length")]
+	public float interactPhysicsRayLength = .2f;
+
 }
